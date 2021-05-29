@@ -28,6 +28,7 @@ type OptionParser struct {
 	short    map[string]*allowedOptions
 	long     map[string]*allowedOptions
 	commands []command
+	exemples []string
 }
 
 type argumentDescription struct {
@@ -211,6 +212,10 @@ func set(obj *allowedOptions, hasNoPrefix bool, param string) {
 func (op *OptionParser) Command(cmd string, helptext string) {
 	cmds := command{cmd, helptext}
 	op.commands = append(op.commands, cmds)
+}
+
+func (op *OptionParser) Exemple(ex string) {
+	op.exemples = append(op.exemples, ex)
 }
 
 // On defines arguments and parameters. Each argument is one of:
@@ -402,6 +407,12 @@ func (op *OptionParser) Help() {
 		for _, cmd := range op.commands {
 			lines := wordwrap(cmd.helptext, wd)
 			formatAndOutput(op.Start, op.Stop, "", "", "", "", cmd.name, lines)
+		}
+	}
+	if len(op.exemples) > 0 {
+		fmt.Println("\nExemples:")
+		for _, exemple := range op.exemples {
+			fmt.Println("  ", exemple)
 		}
 	}
 }

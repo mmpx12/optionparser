@@ -9,7 +9,7 @@ Ruby (OptionParser) like command line arguments processor.
 Installation
 ------------
 
-    go get github.com/speedata/optionparser
+    go get github.com/mmpx12/optionparser
 
 Usage
 -----
@@ -49,6 +49,10 @@ The options `-h` and `--help` are included by default. The example below output 
           y                      Run command y
           z                      Run command z
 
+    Exemples:
+      go run main.go -a --bstring foo -c -d somevalue -e x -f y z
+      go run main.go --help
+
 Settings
 --------
 
@@ -67,7 +71,7 @@ import (
     "fmt"
     "log"
 
-    "github.com/speedata/optionparser"
+    "github.com/mmpx12/optionparser"
 )
 
 func myfunc() {
@@ -88,6 +92,8 @@ func main() {
     op.On("-f", "boolean option", &truefalse)
     op.Command("y", "Run command y")
     op.Command("z", "Run command z")
+    op.Exemple("go run main.go -a --bstring foo -c -d somevalue -e x -f y z")
+    op.Exemple("go run main.go --help")
 
     err := op.Parse()
     if err != nil {
