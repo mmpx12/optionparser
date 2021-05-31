@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/speedata/optionparser?status.svg)](https://godoc.org/github.com/speedata/optionparser)
+[![GoDoc](https://godoc.org/mmpx12/speedata/optionparser?status.svg)](https://godoc.org/github.com/speedata/optionparser)
 
 
 optionparser
@@ -52,6 +52,9 @@ The options `-h` and `--help` are included by default. The example below output 
     Exemples:
       go run main.go -a --bstring foo -c -d somevalue -e x -f y z
       go run main.go --help
+      
+    Output:
+      Exemple of output
 
 Settings
 --------
@@ -94,6 +97,7 @@ func main() {
     op.Command("z", "Run command z")
     op.Exemple("go run main.go -a --bstring foo -c -d somevalue -e x -f y z")
     op.Exemple("go run main.go --help")
+    op.Output("Exemple of output")
 
     err := op.Parse()
     if err != nil {
@@ -121,9 +125,9 @@ is:
 **State**: Actively maintained, and used in production. Without warranty, of course.<br>
 **Maturity level**: 5/5 (works well in all tested repositories, there will be no API change)<br>
 **License**: Free software (MIT License)<br>
-**Installation**: Just run `go get github.com/speedata/optionparser`<br>
-**API documentation**: https://godoc.org/github.com/speedata/optionparser<br>
+**Installation**: Just run `go get github.com/mmpx12/optionparser`<br>
+**API documentation**: https://godoc.org/github.com/mmpx12/optionparser<br>
 **Contact**: <gundlach@speedata.de>, [@speedata](https://twitter.com/speedata)<br>
-**Repository**: https://github.com/speedata/optionparser<br>
+**Repository**: https://github.com/mmpx12/optionparser<br>
 **Dependencies**: None<br>
 **Contribution**: We like to get any kind of feedback (success stories, bug reports, merge requests, ...)

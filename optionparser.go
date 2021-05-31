@@ -29,6 +29,7 @@ type OptionParser struct {
 	long     map[string]*allowedOptions
 	commands []command
 	exemples []string
+	outputs  []string
 }
 
 type argumentDescription struct {
@@ -214,8 +215,14 @@ func (op *OptionParser) Command(cmd string, helptext string) {
 	op.commands = append(op.commands, cmds)
 }
 
+// Exemple is an optianal function that will print exemple(s) when using `-h` or `--help` flag.
 func (op *OptionParser) Exemple(ex string) {
 	op.exemples = append(op.exemples, ex)
+}
+
+// Output is an optianal function that will print exemple of the output when using `-h` or `--help` flag.
+func (op *OptionParser) Output(output string) {
+	op.outputs = append(op.outputs, output)
 }
 
 // On defines arguments and parameters. Each argument is one of:
@@ -233,15 +240,19 @@ func (op *OptionParser) Exemple(ex string) {
 // On panics if the user supplies is an type in its argument other the ones given above.
 //
 //     op := optionparser.NewOptionParser()
+//     op.Banner = "main.go usage:"
 //     op.On("-a", "--func", "call myfunc", myfunc)
 //     op.On("--bstring FOO", "set string to FOO", &somestring)
 //     op.On("-c", "set boolean option (try -no-c)", options)
 //     op.On("-d", "--dlong VAL", "set option", options)
 //     op.On("-e", "--elong [VAL]", "set option with optional parameter", options)
 //     op.On("-f", "boolean option", &truefalse)
+//     op.Exemple("go run main.go -d VALUE")
+//     op.Exemple("go run main.go -e VALUE -a")
+//     op.Output("exemple of program output")
 // and running the program with --help gives the following output:
 //   $go run main.go --help
-//      Usage: [parameter] command
+//      main.go usage:
 //      -h, --help                   Show this help
 //      -a, --func                   call myfunc
 //          --bstring=FOO            set string to FOO
@@ -249,6 +260,13 @@ func (op *OptionParser) Exemple(ex string) {
 //      -d, --dlong=VAL              set option
 //      -e, --elong[=VAL]            set option with optional parameter
 //      -f                           boolean option
+//
+//    Exemples:
+//      go run main.go -d VALUE
+//      go run main.go -d VALUE -e VALUE
+//
+//    Output:
+//      exemple of program output
 //
 func (op *OptionParser) On(a ...interface{}) {
 	option := new(allowedOptions)
@@ -413,6 +431,12 @@ func (op *OptionParser) Help() {
 		fmt.Println("\nExemples:")
 		for _, exemple := range op.exemples {
 			fmt.Println("  ", exemple)
+		}
+	}
+	if len(op.outputs) > 0 {
+		fmt.Println("\nOutputs:")
+		for _, output := range op.outputs {
+			fmt.Println("  ", output)
 		}
 	}
 }
