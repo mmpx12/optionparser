@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/mmpx12/speedata/optionparser?status.svg)](https://godoc.org/github.com/speedata/optionparser)
+[![GoDoc](https://godoc.org/mmpx12/optionparser?status.svg)](https://godoc.org/github.com/mmpx12/optionparser)
 
 
 optionparser
@@ -83,7 +83,7 @@ func myfunc() {
 
 func main() {
     var somestring string
-    var truefalse bool
+    var truefalse, nologo bool
     options := make(map[string]string)
 
     op := optionparser.NewOptionParser()
@@ -93,6 +93,7 @@ func main() {
     op.On("-d", "--dlong VAL", "set option", options)
     op.On("-e", "--elong [VAL]", "set option with optional parameter", options)
     op.On("-f", "boolean option", &truefalse)
+    op.On("--nologo", "Don't print banner", &nologo)
     op.Command("y", "Run command y")
     op.Command("z", "Run command z")
     op.Exemple("go run main.go -a --bstring foo -c -d somevalue -e x -f y z")
@@ -103,6 +104,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
+    op.Logo("main", "random", nologo)
     fmt.Printf("string `somestring' is now %q\n", somestring)
     fmt.Printf("options %v\n", options)
     fmt.Printf("-f %v\n", truefalse)
@@ -110,15 +112,35 @@ func main() {
 }
 ````
 
-and the output of `go run main.go -a --bstring foo -c -d somevalue -e x -f y z`
+and the output of `go run main.go -a --bstring foo --nologo -c -d somevalue -e x -f y z`
 
 is:
+
+                           d8b
+                           Y8P
+
+    88888b.d88b.   8888b.  888 88888b.
+    888 "888 "88b     "88b 888 888 "88b
+    888  888  888 .d888888 888 888  888
+    888  888  888 888  888 888 888  888
+    888  888  888 "Y888888 888 888  888
+
 
     myfunc called
     string `somestring' is now "foo"
     options map[c:true dlong:somevalue elong:x]
     -f true
     Extra: []string{"y", "z"}
+
+You can hide the ascii logo with "--nologo"
+
+`go run main.go -a --bstring foo -c -d somevalue -e x -f y z`
+
+
+    string `somestring' is now ""
+    options map[]
+    -f false
+    Extra: []string{}
 
 
 

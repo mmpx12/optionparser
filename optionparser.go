@@ -6,9 +6,12 @@ package optionparser
 
 import (
 	"fmt"
+	"github.com/common-nighthawk/go-figure"
+	"math/rand"
 	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // A command is a non-dash option (with a helptext)
@@ -52,6 +55,37 @@ type allowedOptions struct {
 	stringvalue    *string
 	stringmap      map[string]string
 	helptext       string
+}
+
+// Ascii art Program name
+// First parameter is the program name
+// Seccond parameter is the font name. If random is passed it will choose a ransom font
+// Third parameter is for print the banner or not
+// This function msut be used AFTER op.Parse()
+func (op *OptionParser) Logo(name string, font string, nobanner bool) {
+	if nobanner {
+		return
+	}
+	if font == "random" {
+		font = randomFont()
+	}
+	myFigure := figure.NewFigure(name, font, true)
+	myFigure.Print()
+	fmt.Println("")
+}
+
+// Get a random font
+func randomFont() string {
+	fonts := []string{"poison", "doom", "elite", "caligraphy", "basic", "gothic",
+		"alligator2", "banner", "nancyj-underlined", "banner3", "kban", "smslant",
+		"slant", "nancyj", "nancyj-fancy", "big", "fender", "ogre", "cyberlarge",
+		"shadow", "banner4", "banner3-D", "colossal", "larry3d", "jazmine", "cosmic",
+		"rozzo", "rowancap", "calgphy2", "roman"}
+	rand.Seed(time.Now().UnixNano())
+	randomIndex := rand.Intn(len(fonts))
+	f := fonts[randomIndex]
+	f = strings.TrimSuffix(f, ".flf")
+	return f
 }
 
 // Return true if s starts with a dash ('-s' for example)
@@ -250,6 +284,7 @@ func (op *OptionParser) Output(output string) {
 //     op.Exemple("go run main.go -d VALUE")
 //     op.Exemple("go run main.go -e VALUE -a")
 //     op.Output("exemple of program output")
+//
 // and running the program with --help gives the following output:
 //   $go run main.go --help
 //      main.go usage:
