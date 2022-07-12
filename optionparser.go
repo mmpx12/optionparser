@@ -6,12 +6,13 @@ package optionparser
 
 import (
 	"fmt"
-	"github.com/common-nighthawk/go-figure"
 	"math/rand"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/common-nighthawk/go-figure"
 )
 
 // A command is a non-dash option (with a helptext)
@@ -40,7 +41,6 @@ type argumentDescription struct {
 	param    string
 	optional bool
 	short    bool
-	negate   bool
 }
 
 type allowedOptions struct {
@@ -124,7 +124,6 @@ func splitOn(arg string) *argumentDescription {
 		param    string
 		optional bool
 		short    bool
-		negate   bool
 	)
 
 	doubleDash := regexp.MustCompile("^--")
@@ -144,12 +143,6 @@ func splitOn(arg string) *argumentDescription {
 	} else {
 		init = 2
 	}
-	if len(arg) > init+2 {
-		if arg[init:init+3] == "no-" {
-			negate = true
-			init = init + 3
-		}
-	}
 
 	re := regexp.MustCompile("[ =]")
 	loc := re.FindStringIndex(arg)
@@ -159,7 +152,6 @@ func splitOn(arg string) *argumentDescription {
 			argument: arg[init:],
 			optional: false,
 			short:    short,
-			negate:   negate,
 		}
 	}
 
@@ -182,7 +174,6 @@ func splitOn(arg string) *argumentDescription {
 		param,
 		optional,
 		short,
-		negate,
 	}
 	return &a
 }
@@ -200,7 +191,7 @@ func formatAndOutput(start int, stop int, dashShort string, short string, comma 
 	}
 }
 
-func set(obj *allowedOptions, hasNoPrefix bool, param string) {
+func set(obj *allowedOptions, param string) {
 	if obj.function != nil {
 		obj.function(param)
 	}
@@ -221,11 +212,7 @@ func set(obj *allowedOptions, hasNoPrefix bool, param string) {
 		if param != "" {
 			value = param
 		} else {
-			if hasNoPrefix {
-				value = "false"
-			} else {
-				value = "true"
-			}
+			value = "true"
 		}
 		obj.stringmap[name] = value
 	}
@@ -233,12 +220,7 @@ func set(obj *allowedOptions, hasNoPrefix bool, param string) {
 		obj.functionNoArgs()
 	}
 	if obj.boolvalue != nil {
-		if hasNoPrefix {
-			*obj.boolvalue = false
-		} else {
-			*obj.boolvalue = true
-		}
-
+		*obj.boolvalue = true
 	}
 }
 
@@ -327,9 +309,6 @@ func (op *OptionParser) On(a ...interface{}) {
 				if ret.param != "" {
 					option.param = ret.param
 				}
-				if ret.negate {
-					option.boolParameter = true
-				}
 			} else {
 				// a string, probably the help text
 				option.helptext = x
@@ -385,12 +364,12 @@ func (op *OptionParser) Parse() error {
 			if ret.param != "" {
 				if option.param != "" {
 					// OK, we've got a parameter and we expect one
-					set(option, ret.negate, ret.param)
+					set(option, ret.param)
 				} else {
 					// we've got a parameter but didn't expect one,
 					// so let's push it onto the stack
 					op.Extra = append(op.Extra, ret.param)
-					set(option, ret.negate, "")
+					set(option, "")
 					// fmt.Printf("extra now %#v\n",op.Extra)
 				}
 			} else {
@@ -402,7 +381,7 @@ func (op *OptionParser) Parse() error {
 						return fmt.Errorf("Parameter expected but none given %s", ret.argument)
 					}
 				}
-				set(option, ret.negate, "")
+				set(option, "")
 			}
 		} else {
 			// not an option, we push it onto the extra array
