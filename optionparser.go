@@ -70,8 +70,8 @@ func (op *OptionParser) Logo(name string, font string, nobanner bool) {
 		font = randomFont()
 	}
 	myFigure := figure.NewFigure(name, font, true)
-	myFigure.Print()
-	fmt.Println("")
+	figure.Write(os.Stderr, myFigure)
+	print("\n")
 }
 
 // Get a random font
